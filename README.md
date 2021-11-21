@@ -22,20 +22,18 @@ Enemies are flying towards you from all directions. To survive the game you must
 ### 2. Compile Contracts
 - ``` truffle migrate --reset ```
 
-### 3. Update local contract address
-- In dapp.js, update line 4 with the contract address provided in the console after running truffle migrate
-
-### 4. Run Tests
+### 3. Run Tests
 - ```truffle test```
 
-### 5. Launch Front End
+### 4. Launch Front End
 - ``` cd client ```
 - ``` npm install ```
 - ``` node server.js ```
 - ``` navigate to localhost:3000 ```
 
-### 6. Connect to MetaMask
+### 5. Connect to MetaMask
 - In the browser you will be asked to connect to MetaMask
 - Use `Ropsten Test Network`
+- Press play, and use your arrow keys to shield yourself!
 
 
