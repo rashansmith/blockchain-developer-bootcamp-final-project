@@ -23,6 +23,7 @@ an enemy, you lose a life, of which you have 3. You get a point for each enemy y
 
 ### 5. Launch Front End
 - ``` cd client ```
+- ``` npm install ```
 - ``` node server.js ```
 - ``` navigate to localhost:3000 ```
 
