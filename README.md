@@ -5,8 +5,7 @@ A Simple 2D Game that uses an Ethereum smart contract to maintain a directory of
 Metamask transactions are required to update and retrieve the pplayer's high score
 
 ### Game Logic
-To survive the game you must use your arrow keys (up, down, left, right) to toggle the shields on each side of your player. If you are hit by
-an enemy, you lose a life, of which you have 3. You get a point for each enemy you block with your shield. 
+Enemies are flying towards you from all directions. To survive the game you must use your arrow keys (up, down, left, right) to toggle the shields on each side of your player. If you are hit by an enemy, you lose a life, of which you have 3. You get a point for each enemy you block with your shield. 
 
 ### Main Game Screen
 ![Screen Shot 2021-11-21 at 6 00 49 PM](https://user-images.githubusercontent.com/6632748/142782520-01b60ed1-2ff1-4ff8-90dc-5ba17b6ae54c.png)
