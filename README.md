@@ -2,7 +2,7 @@
 
 ## Final Project Overview
 A Simple 2D Game that uses an Ethereum smart contract to maintain a directory of players and their high scores. 
-Metamask transactions are required to update and retrieve the pplayer's high score
+Metamask transactions are required to update and retrieve the player's high score.
 
 ### Game Logic
 Enemies are flying towards you from all directions. To survive the game you must use your arrow keys (up, down, left, right) to toggle the shields on each side of your player. If you are hit by an enemy, you lose a life, of which you have 3. You get a point for each enemy you block with your shield. 
