@@ -99,20 +99,21 @@ mmEnable.onclick = async () => {
 
 // 3. Update The high score in the contract, creating a new player if it doesnt exist yet in the contract as well
 async function updateHighScore(some_score) {
-    alert("Please complete the MetaMask transactions to save your new high score! The very first time will be 2 transactions, and any update after that will be 1! Once the transactions are completed you should see your new high score on the screen! (It may take a while or you may have to refresh your page) ")
     console.log(some_score)
     web3 = new Web3(window.ethereum)
     const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
     if(lScore == 0) {
+        alert("Hello new player! Please complete the MetaMask transactions to create your player account! Note: There will be 2 transactions")
         dodgerBox.methods.createNewPlayer().send({from: ethereum.selectedAddress}).then(function(result) {
             return result
         }).catch(function(err) {
-            alert("There was an issue updating your high score, please try again!")
+            alert("There was an creating your player profile, please try again!")
             console.log("There was an issue creating a new player");
         })
     }
     if(some_score > lScore) {
+        alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed!")
         await dodgerBox.methods.updateHighScore(some_score).send({from: ethereum.selectedAddress})
         .then(function(result){
             console.log("The new high score is: " + result)
@@ -283,9 +284,6 @@ function create() {
     // this.physics.add.overlap(red_box_enemy, top_shield, destroyEnemy, null, this);
     // this.physics.add.overlap(red_box_enemy, bottom_shield, destroyEnemy, null, this);
 
-    var randomSpeed1 = Phaser.Math.RND.integerInRange(50,150);
-    var randomSpeed2 = Phaser.Math.RND.integerInRange(-50,-150);
-
     // Spawning the enemy from different directions
     // TODO: Randomize spawn timing better
     // TODO: Remove remianing enemies from game board once game is over
@@ -303,13 +301,18 @@ function create() {
     // Start the game and spawn enemies
     startGame = () => {
         timed_event = this.time.addEvent({
-            delay: 5000,
+            delay: 4000,
             callback: function() {
                 if(lives > 0) {
-                    spawn('enemy_red_box', 150, 250, 100, "X", left_shield);
-                    spawn('enemy_red_box', 600, 250, -150, "X", right_shield);
-                    spawn('enemy_red_box', 400, 100, 40, "Y", top_shield);
-                    spawn('enemy_red_box', 400, 400, -20, "Y", bottom_shield);
+                    var randomSpeed1 = Phaser.Math.RND.integerInRange(50,150);
+                    var randomSpeed2 = Phaser.Math.RND.integerInRange(-50,-150);
+                    var randomSpeed3 = Phaser.Math.RND.integerInRange(50,150);
+                    var randomSpeed4 = Phaser.Math.RND.integerInRange(-50,-150);
+
+                    spawn('enemy_red_box', 150, 250, randomSpeed1, "X", left_shield);
+                    spawn('enemy_red_box', 600, 250, randomSpeed2, "X", right_shield);
+                    spawn('enemy_red_box', 400, 100, randomSpeed3, "Y", top_shield);
+                    spawn('enemy_red_box', 400, 400, randomSpeed4, "Y", bottom_shield);
                 }
             },
             callbackScope: this,
@@ -384,7 +387,7 @@ function playerHit(player, red_box_enemy) {
     else if (lives == 1) {
         life_2.visible = false;
     }
-    else if(lives == 0) {
+    else if(lives <= 0) {
         life_1.visible = false;
         console.log("Game Over!");
         currentScore = score;
