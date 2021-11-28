@@ -10,9 +10,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.4.0",
     "bootstrap-icons": "^1.7.1",
     "express": "^4.17.1",
     "fs": "^0.0.1-security",
+    "openzeppelin-solidity": "^4.4.0",
     "web3": "^1.6.1"
   }
 }

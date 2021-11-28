@@ -1,7 +1,7 @@
 
 /***************** Blockchain Web3 things  ******************/
 // Contract address on Local Testnet, received after running `truffle migrate --reset` 
-const dodgerBoxAddress = '0x0B6f5497fe1fFA6B1a6475B3776fAF72cEc7a8c4'
+const dodgerBoxAddress = '0x1639b5A06ea3c1e8Ae112a08B4B2a54A5980f3F6'
 
 // ABI Variable
 let dodgerBoxABI
@@ -61,15 +61,16 @@ const abi = [
 		"name": "updateHighScore",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
+
 // 1. Detect Web3
 window.addEventListener('load', function() {
     if(typeof window.ethereum !== 'undefined') {
@@ -98,14 +99,16 @@ mmEnable.onclick = async () => {
 
 // 3. Update The high score in the contract, creating a new player if it doesnt exist yet in the contract as well
 async function updateHighScore(some_score) {
+    alert("Please complete the MetaMask transactions to save your new high score! The very first time will be 2 transactions, and any update after that will be 1! Once the transactions are completed you should see your new high score on the screen! (It may take a while or you may have to refresh your page) ")
     console.log(some_score)
     web3 = new Web3(window.ethereum)
-    const dodgerBox = new web3.eth.Contract(abi, '0x0f54Aa4De31a83668ED2dd814675E2D2a03E6f50')
+    const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
     if(lScore == 0) {
         dodgerBox.methods.createNewPlayer().send({from: ethereum.selectedAddress}).then(function(result) {
             return result
         }).catch(function(err) {
+            alert("There was an issue updating your high score, please try again!")
             console.log("There was an issue creating a new player");
         })
     }
@@ -114,6 +117,7 @@ async function updateHighScore(some_score) {
         .then(function(result){
             console.log("The new high score is: " + result)
         }).catch(function(err) {
+            alert("There was an issue updating your high score, please try again!")
             console.log("The high score could not be updated")
         })  
     }
@@ -125,7 +129,7 @@ async function updateHighScore(some_score) {
 // 4. Get high score for current User
 async function getHighScore() {
     web3 = new Web3(window.ethereum)
-    const dodgerBox = new web3.eth.Contract(abi, '0x0f54Aa4De31a83668ED2dd814675E2D2a03E6f50')
+    const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
     return lScore
 }
@@ -216,12 +220,16 @@ function create() {
         score = 0;
         play_button.visible = false;
         end_game.visible = false;
-        player.disableBody();
+        player.enableBody();
         left_shield.disableBody()
         right_shield.disableBody()
-        top_shield.enableBody()
+        top_shield.disableBody()
         bottom_shield.disableBody()
         high_score_text.visible = false;
+        lives = 3;
+        life_1.visible = true;
+        life_2.visible = true;
+        life_3.visible = true;
         startGame();
     });
 
@@ -234,7 +242,6 @@ function create() {
         high_score_text.visible = true;
         high_score_text.setText("Your High Score: " + result)
     });
-
 
     // TODO: Add Instructions
     // instructions_button = this.add.image(500, 400, 'instructions_button');
@@ -270,11 +277,11 @@ function create() {
     bottom_shield.disableBody();
 
     // Colliders - so that sprites don't run over/through each other
-    this.physics.add.overlap(player, red_box_enemy, playerHit, null, this);
-    this.physics.add.overlap(red_box_enemy, left_shield, destroyEnemy, null, this);
-    this.physics.add.overlap(red_box_enemy, right_shield, destroyEnemy, null, this);
-    this.physics.add.overlap(red_box_enemy, top_shield, destroyEnemy, null, this);
-    this.physics.add.overlap(red_box_enemy, bottom_shield, destroyEnemy, null, this);
+    // this.physics.add.overlap(player, red_box_enemy, playerHit, null, this);
+    // this.physics.add.overlap(red_box_enemy, left_shield, destroyEnemy, null, this);
+    // this.physics.add.overlap(red_box_enemy, right_shield, destroyEnemy, null, this);
+    // this.physics.add.overlap(red_box_enemy, top_shield, destroyEnemy, null, this);
+    // this.physics.add.overlap(red_box_enemy, bottom_shield, destroyEnemy, null, this);
 
     var randomSpeed1 = Phaser.Math.RND.integerInRange(50,150);
     var randomSpeed2 = Phaser.Math.RND.integerInRange(-50,-150);
@@ -358,11 +365,13 @@ function update() {
 }
 
 function destroyEnemy(red_box_enemy, shield) {
-    red_box_enemy.disableBody();
-    red_box_enemy.visible = false;
-    console.log("got one!");
-    score = score + 1;
-    scoreText.setText('Score: ' + score);
+    if (lives != 0){
+        red_box_enemy.disableBody();
+        red_box_enemy.visible = false;
+        console.log("got one!");
+        score = score + 1;
+        scoreText.setText('Score: ' + score);
+    }
 }
 
 // When the game ends, call the contract to update the high score as needed
@@ -375,26 +384,22 @@ function playerHit(player, red_box_enemy) {
     else if (lives == 1) {
         life_2.visible = false;
     }
-    else if(lives <= 0) {
+    else if(lives == 0) {
         life_1.visible = false;
         console.log("Game Over!");
         currentScore = score;
         end_game.visible = true;
         play_button.visible = true;
         timed_event.remove(true);
-        player.disableBody();
-        left_shield.disableBody();
-        right_shield.disableBody();
-        top_shield.disableBody();
-        bottom_shield.disableBody();
+        // player.disableBody();
+        // left_shield.disableBody();
+        // right_shield.disableBody();
+        // top_shield.disableBody();
+        // bottom_shield.disableBody();
         var s = score
         updateHighScore(s).then(function(result) {
             high_score_text.visible = true;
             high_score_text.setText("Your High Score: " + result)
         });
-        // getHighScore().then(function(result) {
-        //     high_score_text.visible = true;
-        //     high_score_text.setText("High Score: " + result)
-        // });
     }
 }
