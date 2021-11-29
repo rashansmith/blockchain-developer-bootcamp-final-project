@@ -103,14 +103,19 @@ mmEnable.onclick = async () => {
     const mmCurrentAccount = document.getElementById('mm-current-account')
 }
 
+var lastClick = 0;
+var delay = 10;
+
 // 3. Update The high score in the contract, creating a new player if it doesnt exist yet in the contract as well
 async function updateHighScore(some_score) {
     console.log(some_score)
     web3 = new Web3(window.ethereum)
     const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
-    const check = false;
     if(lScore == 0) {
+        if (lastClick >= (Date.now() - delay))
+        return;
+        lastClick = Date.now();
         alert("Hello new player! Please complete the MetaMask transactions to create your player account! After some time you should see your new high score displayed! (If more than one transaction occurs, you only need to approve the first one)")
         await dodgerBox.methods.createNewPlayer(some_score).send({from: ethereum.selectedAddress}).then(function(result) {
             return result
@@ -120,6 +125,9 @@ async function updateHighScore(some_score) {
         })
     } else {
         if(some_score > lScore) {
+            if (lastClick >= (Date.now() - delay))
+            return;
+            lastClick = Date.now();
             alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed! (If more than one transaction occurs, you only need to approve the first one)")
             await dodgerBox.methods.updateHighScore(some_score).send({from: ethereum.selectedAddress})
             .then(function(result){
@@ -181,6 +189,7 @@ var right_shield;
 var bottom_shield;
 var shield_upright;
 var play_button;
+var update_high_score;
 var instructions_button;
 var end_game;
 var randomNumber;
@@ -198,11 +207,12 @@ var score = 0;
 var scoreText;
 var high_score;
 var high_score_text;
-
+var check = 0;
 // Preload Game Assets
 function preload() {
     this.load.image('play_button', './assets/play_button.png');
     this.load.image('instructions_button', './assets/instructions_button.png');
+    this.load.image('update_high_score', './assets/update_high_score.png');
     this.load.image('end_game', './assets/end_game.png');
     this.load.image('life', './assets/life.png');
     this.load.image('player', './assets/main_player.png');
@@ -225,10 +235,13 @@ function create() {
     end_game.visible = false;
     play_button = this.add.image(400, 400, 'play_button');
     play_button.setInteractive();
+    // update_high_score = this.add.image(400, 450, 'update_high_score');
+    // update_high_score.setInteractive();
     play_button.on('pointerdown', () => {
         score = 0;
         play_button.visible = false;
         end_game.visible = false;
+        //update_high_score.visible = false;
         player.enableBody();
         left_shield.disableBody()
         right_shield.disableBody()
@@ -239,6 +252,7 @@ function create() {
         life_1.visible = true;
         life_2.visible = true;
         life_3.visible = true;
+        check = 0;
         startGame();
     });
 
@@ -396,22 +410,20 @@ function playerHit(player, red_box_enemy) {
         life_2.visible = false;
     }
     else if(lives <= 0) {
-        life_1.visible = false;
-        console.log("Game Over!");
-        currentScore = score;
-        score = currentScore;
-        end_game.visible = true;
-        play_button.visible = true;
-        timed_event.remove(true);
-        // player.disableBody();
-        // left_shield.disableBody();
-        // right_shield.disableBody();
-        // top_shield.disableBody();
-        // bottom_shield.disableBody();
-        var s = score
-        updateHighScore(s).then(function(result) {
-            high_score_text.visible = true;
-            high_score_text.setText("Your High Score: " + result)
-        });
+        if (check == 0) {
+            check = 1;
+            life_1.visible = false;
+            console.log("Game Over!");
+            currentScore = score;
+            score = currentScore;
+            end_game.visible = true;
+            play_button.visible = true;
+            timed_event.remove(true);
+            var s = score
+            updateHighScore(s).then(function(result) {
+                high_score_text.visible = true;
+                high_score_text.setText("Your High Score: " + result)
+            });
+        }
     }
 }
