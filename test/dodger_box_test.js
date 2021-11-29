@@ -9,14 +9,14 @@ contract("DodgerBox", function (accounts) {
   describe("Functionality", () => {
     it("Should create a new Player", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       const highScore = await dbInstance.getHighScore({from: accounts[0]});
-      assert.equal(highScore, 0,  `${highScore} was no 0!`);
+      assert.equal(highScore, 1,  `${highScore} was no 1!`);
     });
 
     it("Should update the high score", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       await dbInstance.updateHighScore(42, {from: accounts[0]});
       const updatedHighScore = await dbInstance.getHighScore({from: accounts[0]})
       assert.equal(updatedHighScore, 42,  `${updatedHighScore} was not updated to 42!`);
@@ -24,7 +24,7 @@ contract("DodgerBox", function (accounts) {
 
     it("Should not update the high score", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       await dbInstance.updateHighScore(50, {from: accounts[0]});
       try {
         await dbInstance.updateHighScore(30, {from: accounts[0]});
@@ -36,7 +36,7 @@ contract("DodgerBox", function (accounts) {
 
     it("Should get the correct high score", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       await dbInstance.updateHighScore(60, {from: accounts[0]});
       try {
         await dbInstance.updateHighScore(60, {from: accounts[0]});
@@ -49,7 +49,7 @@ contract("DodgerBox", function (accounts) {
         
     it("Should not let someone else update their high score", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       try {
         await dbInstance.updateHighScore(20, {from: accounts[0]});
         await dbInstance.updateHighScore(60, {from: accounts[1]});
@@ -59,21 +59,21 @@ contract("DodgerBox", function (accounts) {
       }
     });
 
-    it("Should create a player and set their score to 0 and their status to New", async() => {
+    it("Should create a player and set their score to 1 and their status to New", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       try {
       } catch(err) {
         const score = await dbInstance.getHighScore({from: accounts[0]})
         const status = await dbInstance.getStatus({from: accounts[0]})
-        assert.equal(score, 0, "The initial high score was set properly");
+        assert.equal(score, 1, "The initial high score was set properly");
         assert.equal(status, "New", "The initial status was set properly");
       }
     });
 
     it("Should update player's status to Active once their high score has been changed", async() => {
       const dbInstance = await DodgerBox.deployed();
-      await dbInstance.createNewPlayer({from: accounts[0]});
+      await dbInstance.createNewPlayer(1, {from: accounts[0]});
       try {
       } catch(err) {
         const high_score = await dbInstance.updateHighScore(60, {from: accounts[1]});
