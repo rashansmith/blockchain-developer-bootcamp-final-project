@@ -16,9 +16,10 @@ Enemies are flying towards you from all directions. To survive the game you must
 ### Screencast Demo:
 - https://youtu.be/Wcn3ecPMgxs
 
+
 ### Project Hosted URL - Running on Ethereum Ropsten Testnet
 - https://dodgerbox.netlify.app/ 
-
+- You will need a test account in Metamask on the Ropsten Network
 
 ## Local Testing Instructions:
 ### 1. Initiate Local testnet
@@ -29,3 +30,10 @@ Enemies are flying towards you from all directions. To survive the game you must
 
 ### 3. Run Tests
 - ```truffle test```
+
+### 4. Run front end on local server (optional)
+- You will need a test account in Metamask on the Ropsten Network
+- ```cd client```
+- ```npm install```
+- ```node server.js```
+- navigate to localhost:3000
