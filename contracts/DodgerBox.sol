@@ -9,7 +9,7 @@ import '@openzeppelin/contracts/security/ReentrancyGuard.sol';
 /// @author Rashan Smith
 /// @notice interface for DodgerBox main contracy
 interface DodgerBoxGame {
-  function createNewPlayer() external returns(bool);
+  function createNewPlayer(uint256 score) external returns(bool);
   function getStatus() external view returns(string memory);
   function updateHighScore(uint256 score) external returns (bool) ;
   function getHighScore() external view returns(uint256);
@@ -52,9 +52,9 @@ contract DodgerBox is DodgerBoxGame, ReentrancyGuard {
   }
 
   /// @notice This creates a new player with the Player Struct
-  function createNewPlayer() external returns(bool) {
+  function createNewPlayer(uint256 score) external returns(bool) {
     highScores[msg.sender] = Player({
-      highScore: 0,
+      highScore: score,
       status: Status.New
     });
     return true;

@@ -1,7 +1,7 @@
 
 /***************** Blockchain Web3 things  ******************/
 // Contract address on Local Testnet, received after running `truffle migrate --reset` 
-const dodgerBoxAddress = '0x1639b5A06ea3c1e8Ae112a08B4B2a54A5980f3F6'
+const dodgerBoxAddress = '0xfFB5C92E67bc6BEef7Ae24f98f747f89DD221330'
 
 // ABI Variable
 let dodgerBoxABI
@@ -12,7 +12,13 @@ let web3
 // Contract ABI from Remix
 const abi = [
 	{
-		"inputs": [],
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "score",
+				"type": "uint256"
+			}
+		],
 		"name": "createNewPlayer",
 		"outputs": [
 			{
@@ -104,23 +110,24 @@ async function updateHighScore(some_score) {
     const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
     if(lScore == 0) {
-        alert("Hello new player! Please complete the MetaMask transactions to create your player account! Note: There will be 2 transactions")
-        dodgerBox.methods.createNewPlayer().send({from: ethereum.selectedAddress}).then(function(result) {
+        alert("Hello new player! Please complete the MetaMask transactions to create your player account! After some time you should see your new high score displayed!")
+        dodgerBox.methods.createNewPlayer(some_score).send({from: ethereum.selectedAddress}).then(function(result) {
             return result
         }).catch(function(err) {
-            alert("There was an creating your player profile, please try again!")
+            alert("There was an error creating your player profile, please try again!")
             console.log("There was an issue creating a new player");
         })
-    }
-    if(some_score > lScore) {
-        alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed!")
-        await dodgerBox.methods.updateHighScore(some_score).send({from: ethereum.selectedAddress})
-        .then(function(result){
-            console.log("The new high score is: " + result)
-        }).catch(function(err) {
-            alert("There was an issue updating your high score, please try again!")
-            console.log("The high score could not be updated")
-        })  
+    } else {
+        if(some_score > lScore) {
+            alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed!")
+            await dodgerBox.methods.updateHighScore(some_score).send({from: ethereum.selectedAddress})
+            .then(function(result){
+                console.log("The new high score is: " + result)
+            }).catch(function(err) {
+                alert("There was an issue updating your high score, please try again!")
+                console.log("The high score could not be updated")
+            })  
+        }
     }
     var new_high_score = await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress});
     return new_high_score;

@@ -13,7 +13,7 @@ Enemies are flying towards you from all directions. To survive the game you must
 - ```migrations``` contains migration information
 - ```test``` contains the truffle tests
 
-### Project Hosted URL
+### Project Hosted URL - Running on Ethereum Ropsten Testnet
 - https://dodgerbox.netlify.app/ 
 
 
