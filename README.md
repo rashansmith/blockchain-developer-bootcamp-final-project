@@ -24,6 +24,7 @@ Enemies are flying towards you from all directions. To survive the game you must
 ## Local Testing Instructions:
 ### 1. Initiate Local testnet
 - ``` ganache-cli ```
+- make sure it is running on port ```8545```
 
 ### 2. Compile Contracts
 - ``` truffle migrate --reset ```
