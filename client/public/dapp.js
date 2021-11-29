@@ -1,7 +1,7 @@
 
 /***************** Blockchain Web3 things  ******************/
 // Contract address on Local Testnet, received after running `truffle migrate --reset` 
-const dodgerBoxAddress = '0xfFB5C92E67bc6BEef7Ae24f98f747f89DD221330'
+const dodgerBoxAddress = '0xd7A4e18439eb3750FF3d9961965817b4bd31662F'
 
 // ABI Variable
 let dodgerBoxABI
@@ -109,9 +109,10 @@ async function updateHighScore(some_score) {
     web3 = new Web3(window.ethereum)
     const dodgerBox = new web3.eth.Contract(abi, dodgerBoxAddress)
     const lScore =  await dodgerBox.methods.getHighScore().call({from: ethereum.selectedAddress})
+    const check = false;
     if(lScore == 0) {
-        alert("Hello new player! Please complete the MetaMask transactions to create your player account! After some time you should see your new high score displayed!")
-        dodgerBox.methods.createNewPlayer(some_score).send({from: ethereum.selectedAddress}).then(function(result) {
+        alert("Hello new player! Please complete the MetaMask transactions to create your player account! After some time you should see your new high score displayed! (If more than one transaction occurs, you only need to approve the first one)")
+        await dodgerBox.methods.createNewPlayer(some_score).send({from: ethereum.selectedAddress}).then(function(result) {
             return result
         }).catch(function(err) {
             alert("There was an error creating your player profile, please try again!")
@@ -119,7 +120,7 @@ async function updateHighScore(some_score) {
         })
     } else {
         if(some_score > lScore) {
-            alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed!")
+            alert("Please complete the MetaMask transactions to save your new high score! After some time you should see your new high score displayed! (If more than one transaction occurs, you only need to approve the first one)")
             await dodgerBox.methods.updateHighScore(some_score).send({from: ethereum.selectedAddress})
             .then(function(result){
                 console.log("The new high score is: " + result)
@@ -398,6 +399,7 @@ function playerHit(player, red_box_enemy) {
         life_1.visible = false;
         console.log("Game Over!");
         currentScore = score;
+        score = currentScore;
         end_game.visible = true;
         play_button.visible = true;
         timed_event.remove(true);
